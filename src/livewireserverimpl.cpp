@@ -23,7 +23,7 @@ void ServerImpl::Run()
     m_pReceiver = std::make_unique<Receiver>(m_context, std::make_shared<Parser>(m_pHandler));
     if(m_context.stopped())
     {
-        pmlLog(LOG_INFO) << "LivewireServer\t" << "Restart context";
+        pmlLog(LOG_INFO, "pml::livewire") << "Restart context";
         m_context.restart();
     }
 
@@ -46,18 +46,18 @@ void ServerImpl::RunContext()
         m_pReceiver->Run(asio::ip::make_address("0.0.0.0"), asio::ip::make_address("239.192.255.3"), LIVEWIRE_PORT);
 
         auto work = asio::require(m_context.get_executor(), asio::execution::outstanding_work.tracked);
-        pmlLog(LOG_INFO) << "LivewireServer\t" << "Run context";
+        pmlLog(LOG_INFO, "pml::livewire") << "Run context";
         m_context.run();
-        pmlLog(pml::LOG_DEBUG) << "LivewireServer\tContext stopped";
+        pmlLog(pml::LOG_DEBUG, "pml::livewire") << "Context stopped";
     }
     catch (const std::exception& e)
     {
-        pmlLog(LOG_ERROR) << "LivewireServer\t Failed to run context: " << e.what();
+        pmlLog(LOG_ERROR, "pml::livewire") << "Failed to run context: " << e.what();
     }
 }
 void ServerImpl::Stop()
 {
-    pmlLog(LOG_INFO) << "LivewireServer\t" << "Stop context";
+    pmlLog(LOG_INFO, "pml::livewire") << "Stop context";
     m_context.stop();
     if(m_pThread)
     {
