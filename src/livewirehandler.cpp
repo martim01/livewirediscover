@@ -6,9 +6,9 @@ using namespace pml::livewire;
 
 void StdHandler::Message(const message& aMessage)
 {
-    pmlLog() << aMessage.ip;
+    pmlLog(pml::LOG_INFO, "pml::livewire") << aMessage.ip;
     for(const auto& [src, details] : aMessage.mSources)
     {
-        pmlLog() << src << "\t" << details.sName << "\t" << details.nStream;
+        pmlLog(pml::LOG_INFO, "pml::livewire") << src << "\t" << details.sName << "\t" << details.nStream;
     }
 }
