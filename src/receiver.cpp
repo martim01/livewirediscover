@@ -27,7 +27,7 @@ void Receiver::Run(const asio::ip::address& listen_address, const asio::ip::addr
         m_socket.set_option(asio::ip::multicast::join_group(multiAddr, addr), ec);
         if(ec)
         {
-            pmlLog(pml::LOG_CRITICAL) << "LiveWire\t" << "Receiver [" << nPort << "]: Can't join group: " << ec;
+            pmlLog(pml::LOG_CRITICAL, "pml::livewire") << "Receiver [" << nPort << "]: Can't join group: " << ec;
         }
         else
         {
@@ -36,26 +36,26 @@ void Receiver::Run(const asio::ip::address& listen_address, const asio::ip::addr
     }
     else
     {
-        pmlLog(LOG_ERROR) << "LiveWire\t" << "Receiver Run failed to open socket" << ec;
+        pmlLog(LOG_ERROR, "pml::livewire") << "Receiver Run failed to open socket" << ec;
     }
 }
 
 void Receiver::do_receive()
 {
-    pmlLog(LOG_TRACE) << "LivewireServer\t" << "Receiver do_receive";
+    pmlLog(LOG_TRACE, "pml::livewire") << "Receiver do_receive";
 
     m_socket.async_receive_from(asio::buffer(m_data), m_sender_endpoint,
         [this](std::error_code ec, std::size_t length)
     {
         if (!ec)
         {
-            pmlLog(LOG_TRACE) << "LivewireServer\t" << "Receiver do_receive: received";
+            pmlLog(LOG_TRACE, "pml::livewire") << "Receiver do_receive: received";
             m_pParser->ParseMessage(m_sender_endpoint.address().to_string(), std::vector<unsigned char>(m_data.begin(), m_data.begin()+length));
             do_receive();
         }
         else
         {
-            pmlLog(LOG_ERROR) << "LivewireServer\t" << "Receiver receive failed :" << ec;
+            pmlLog(LOG_ERROR, "pml::livewire") << "Receiver receive failed :" << ec;
         }
     });
 }
