@@ -20,12 +20,12 @@ std::optional<pml::livewire::message> Parser::ParseMessage(std::vector<unsigned 
 {
     if(vMessage.size() < 0x81)
     {
-        pmlLog(LOG_ERROR) << "LivewireServer\t" << "Parser message to short";
+        pmlLog(LOG_ERROR, "pml::livewire") << "Parser message to short";
         return {};
     }
 
     message aMessage; 
-    pmlLog(pml::LOG_INFO) << "Parser\t" << "Message length: " << vMessage.size();
+    pmlLog(pml::LOG_TRACE, "pml::livewire") << "Message length: " << vMessage.size();
     //0x45-0x48 are Ip adresss
     aMessage.ip = IpAddress(std::to_string(vMessage[0x45])+"."+std::to_string(vMessage[0x46])+"."+std::to_string(vMessage[0x47])+"."+std::to_string(vMessage[0x48]));
 
@@ -34,27 +34,27 @@ std::optional<pml::livewire::message> Parser::ParseMessage(std::vector<unsigned 
     
     while(vMessage[nByte] == 'S' && nByte+4 < vMessage.size())
     {
-        pmlLog(pml::LOG_DEBUG) << "Parser\t" << "@ " << nByte;
+        pmlLog(pml::LOG_TRACE, "pml::livewire") << "@ " << nByte;
 
         source aSource;
         auto sSrc = std::string(vMessage.begin()+nByte, vMessage.begin()+nByte+4);
 
-        pmlLog(pml::LOG_DEBUG) << "Parser\t" << "Src= " << sSrc;
+        pmlLog(pml::LOG_TRACE, "pml::livewire") << "Src= " << sSrc;
 
         nByte += 0x14;
         if(nByte+1 >= vMessage.size())
         {
-            pmlLog(pml::LOG_DEBUG) << "Parser\t" << "end of message";    
+            pmlLog(pml::LOG_TRACE, "pml::livewire") << "End of message";    
             break;
         }
         
         aSource.nStream = (static_cast<int>(vMessage[nByte]) << 8) + static_cast<int>(vMessage[nByte+1]);
-        pmlLog(pml::LOG_DEBUG) << "Parser\t" << "stream= " << aSource.nStream;
+        pmlLog(pml::LOG_TRACE, "pml::livewire") "Stream= " << aSource.nStream;
 
         nByte += 0x47;
         if(nByte >= vMessage.size())
         {
-            pmlLog(pml::LOG_DEBUG) << "Parser\t" << "end of message";
+            pmlLog(pml::LOG_TRACE, "pml::livewire") << "End of message";
             break;
         }
             
@@ -62,13 +62,13 @@ std::optional<pml::livewire::message> Parser::ParseMessage(std::vector<unsigned 
         
         if(nByte+nLength >= vMessage.size())
         {
-            pmlLog(pml::LOG_DEBUG) << "Parser\t" << "end of message";
+            pmlLog(pml::LOG_TRACE, "pml::livewire") "End of message";
             break;
         }
         nByte++;        
         aSource.sName = std::string(vMessage.begin()+nByte, vMessage.begin()+nByte+nLength);
 
-        pmlLog(pml::LOG_DEBUG) << "Parser\t" << "Name= " << aSource.sName;
+        pmlLog(pml::LOG_TRACE, "pml::livewire") << "Name= " << aSource.sName;
 
         aMessage.mSources.try_emplace(sSrc, aSource);
         
