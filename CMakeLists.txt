@@ -80,6 +80,8 @@ target_compile_options(livewireserver PRIVATE ${flags})
 #linux specific
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	target_compile_definitions(livewireserver PRIVATE __GNU__)
+else()
+	target_compile_definitions(livewireserver PRIVATE __WIN32__ LIVEWIRE_DLL)
 endif()
 
 set_target_properties(livewireserver PROPERTIES DEBUG_POSTFIX "d")
