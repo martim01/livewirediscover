@@ -49,7 +49,7 @@ std::optional<pml::livewire::message> Parser::ParseMessage(std::vector<unsigned 
         }
         
         aSource.nStream = (static_cast<int>(vMessage[nByte]) << 8) + static_cast<int>(vMessage[nByte+1]);
-        pmlLog(pml::LOG_TRACE, "pml::livewire") "Stream= " << aSource.nStream;
+        pmlLog(pml::LOG_TRACE, "pml::livewire") << "Stream= " << aSource.nStream;
 
         nByte += 0x47;
         if(nByte >= vMessage.size())
@@ -62,7 +62,7 @@ std::optional<pml::livewire::message> Parser::ParseMessage(std::vector<unsigned 
         
         if(nByte+nLength >= vMessage.size())
         {
-            pmlLog(pml::LOG_TRACE, "pml::livewire") "End of message";
+            pmlLog(pml::LOG_TRACE, "pml::livewire") << "End of message";
             break;
         }
         nByte++;        
