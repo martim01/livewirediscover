@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 project(livewireserver LANGUAGES CXX VERSION 1.1.1)
 
-execute_process(COMMAND ${CMAKE_COMMAND} -DNAMESPACE=livewireserver -DMAJOR=${PROJECT_VERSION_MAJOR} -DMINOR=${PROJECT_VERSION_MINOR} -DPATCH=${PROJECT_VERSION_PATCH} -P ${CMAKE_CURRENT_SOURCE_DIR}/version.cmake)
+include(addexternal.cmake)
+
+execute_process(COMMAND ${CMAKE_COMMAND} -DNAMESPACE=${PROJECT_NAME} -DMAJOR=${PROJECT_VERSION_MAJOR} -DMINOR=${PROJECT_VERSION_MINOR} -DPATCH=${PROJECT_VERSION_PATCH} -DOUTPUT=${CMAKE_BINARY_DIR} -P ${CMAKE_SOURCE_DIR}/version.cmake)
 
 SET(DIR_BASE $ENV{HOME} CACHE STRING "base location for libraries")
 SET(DIR_LOG ${DIR_BASE}/log CACHE STRING "location of pml log")
@@ -17,41 +19,9 @@ target_include_directories(livewireserver PUBLIC ${PROJECT_SOURCE_DIR}/include)
 target_include_directories(livewireserver PUBLIC ${CMAKE_BINARY_DIR}/include)
 
 #Get log
-find_path(SP_TEMP_DIR7 NAMES "CMakeLists.txt" PATHS ${DIR_LOG} NO_CACHE)
-if((NOT SP_TEMP_DIR7) OR (NOT EXISTS ${SP_TEMP_DIR7}))
-	message(STATUS "log not found - clone from GitHub")
-	execute_process(COMMAND git clone https://github.com/martim01/log/ ${DIR_LOG})
-endif()
-unset(SP_TEMP_DIR7)
+add_external_library(log ${DIR_LOG} "https://github.com/martim01/log.git" "" FALSE)
+add_external_library(asio ${DIR_ASIO} "https://github.com/chriskohlhoff/asio" "" FALSE)
 
-find_path(SP_TEMP_DIR8 NAMES "CMakeLists.txt" PATHS ${DIR_LOG} NO_CACHE)
-if((NOT SP_TEMP_DIR8) OR (NOT EXISTS ${SP_TEMP_DIR8}))
-	message(FATAL_ERROR "Failed to clone pml::Log")
-endif()
-unset(SP_TEMP_DIR8)
-
-if(${BUILD_LOG})
-	add_subdirectory(${DIR_LOG} ${CMAKE_SOURCE_DIR}/build/log)
-else()
-	message(STATUS "Restgoose - pml::log being build elsewhere")
-endif()
-
-
-# ASIO
-message(STATUS "Look for asio in ${DIR_ASIO}")
-find_path(SP_TEMP_DIR NAMES "asio.hpp" PATHS ${DIR_ASIO}/asio/include NO_CACHE)
-if((NOT SP_TEMP_DIR) OR (NOT EXISTS ${SP_TEMP_DIR}))
-	message(STATUS "asio not found - clone from GitHub")
-	execute_process(COMMAND git clone https://github.com/chriskohlhoff/asio ${DIR_ASIO})
-endif()
-
-find_path(SP_TEMP_DIR2 NAMES "asio.hpp" PATHS ${DIR_ASIO}/asio/include NO_CACHE)
-if((NOT SP_TEMP_DIR2) OR (NOT EXISTS ${SP_TEMP_DIR2}))
-	message(FATAL_ERROR "Failed to clone asio")
-else()
-	message(STATUS "asio found")
-endif()
-unset(SP_TEMP_DIR2)
 
 target_include_directories(livewireserver PUBLIC ${PROJECT_SOURCE_DIR}/include)
 include_directories(${DIR_LOG}/include)
@@ -71,6 +41,8 @@ endif()
 
 target_compile_options(livewireserver PRIVATE ${flags})
 target_compile_definitions(livewireserver PUBLIC ASIO_STANDALONE)
+
+target_link_directories(livewireserver PRIVATE ${CMAKE_SOURCE_DIR}/lib)
 
 target_link_libraries(livewireserver optimized pml_log debug pml_logd)
 target_compile_options(livewireserver PRIVATE ${flags})
