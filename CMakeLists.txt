@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 project(livewireserver LANGUAGES CXX VERSION 1.1.1)
 
-include(addexternal.cmake)
+include(${CMAKE_SOURCE_DIR}/addexternal.cmake)
 
 execute_process(COMMAND ${CMAKE_COMMAND} -DNAMESPACE=${PROJECT_NAME} -DMAJOR=${PROJECT_VERSION_MAJOR} -DMINOR=${PROJECT_VERSION_MINOR} -DPATCH=${PROJECT_VERSION_PATCH} -DOUTPUT=${CMAKE_BINARY_DIR} -P ${CMAKE_SOURCE_DIR}/version.cmake)
 
@@ -19,8 +19,8 @@ target_include_directories(livewireserver PUBLIC ${PROJECT_SOURCE_DIR}/include)
 target_include_directories(livewireserver PUBLIC ${CMAKE_BINARY_DIR}/include)
 
 #Get log
-add_external_library(log ${DIR_LOG} "https://github.com/martim01/log.git" "" FALSE)
-add_external_library(asio ${DIR_ASIO} "https://github.com/chriskohlhoff/asio" "" FALSE)
+add_external_library(pml_log ${DIR_LOG} "martim01/log" "" FALSE "CMakeLists.txt" )
+add_external_library(asio ${DIR_ASIO} "chriskohlhoff/asio" "" FALSE "README")
 
 
 target_include_directories(livewireserver PUBLIC ${PROJECT_SOURCE_DIR}/include)
